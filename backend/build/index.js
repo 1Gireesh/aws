@@ -11,7 +11,7 @@ const productRoute_1 = require("./routes/product/productRoute");
 const userRoutes_1 = __importDefault(require("./routes/user/userRoutes"));
 const google_1 = require("./controller/user/oAuth/google");
 const mongoUrl = process.env.MONGOURL || "";
-const port = 80;
+const port = 8080;
 const app = (0, express_1.default)();
 // For CORS Policy
 app.use((0, cors_1.default)());

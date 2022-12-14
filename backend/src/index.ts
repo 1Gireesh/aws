@@ -12,7 +12,7 @@ import userRoutes from "./routes/user/userRoutes";
 import { Orouter } from "./controller/user/oAuth/google";
 
 const mongoUrl = process.env.MONGOURL || "";
-const port = 80;
+const port = 8080;
 const app = express();
 
 // For CORS Policy
