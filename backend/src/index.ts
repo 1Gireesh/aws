@@ -20,7 +20,7 @@ app.use(cors());
 app.use(express.json());
 
 // Just for checking the Home Route
-app.all("/", (req, res) => setTimeout(()=>res.send("works"),6000));
+app.all("/", (req, res) => res.send("works"));
 
 app.use("/care", careRouter);
 app.use("/mind", mindRouter);
