@@ -9,7 +9,7 @@ const careModel_1 = require("../../modules/product/careModel");
 const mindModel_1 = require("../../modules/product/mindModel");
 const getCare = async (req, res) => {
     try {
-        let care = await careModel_1.careModel.find();
+        let care = await careModel_1.careModel.find({}, { tests: 0, recomends: 0 });
         return res.send(care);
     }
     catch (e) {

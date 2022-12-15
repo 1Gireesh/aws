@@ -17,7 +17,7 @@ const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 // Just for checking the Home Route
-app.all("/", (req, res) => setTimeout(() => res.send("works"), 6000));
+app.all("/", (req, res) => res.send("works"));
 app.use("/care", productRoute_1.careRouter);
 app.use("/mind", productRoute_1.mindRouter);
 app.use("/docter", productRoute_1.docterRouter);
