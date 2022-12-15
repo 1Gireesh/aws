@@ -20,7 +20,7 @@ app.use(cors());
 app.use(express.json());
 
 // Just for checking the Home Route
-app.all("/", (req, res) => res.send("working"));
+app.all("/", (req, res) => setTimeout(()=>res.send("works"),6000));
 
 app.use("/care", careRouter);
 app.use("/mind", mindRouter);
@@ -36,4 +36,4 @@ connectDb(mongoUrl);
 // Connecting App to the Localhost
 app.listen(port, () => {
   console.log("Connected to http://localhost:" + port);
-});
+}).setTimeout(10000);

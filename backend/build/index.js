@@ -17,7 +17,7 @@ const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
 // Just for checking the Home Route
-app.all("/", (req, res) => res.send("working"));
+app.all("/", (req, res) => setTimeout(() => res.send("works"), 6000));
 app.use("/care", productRoute_1.careRouter);
 app.use("/mind", productRoute_1.mindRouter);
 app.use("/docter", productRoute_1.docterRouter);
@@ -29,4 +29,4 @@ app.use("/api/user", google_1.Orouter);
 // Connecting App to the Localhost
 app.listen(port, () => {
     console.log("Connected to http://localhost:" + port);
-});
+}).setTimeout(10000);
