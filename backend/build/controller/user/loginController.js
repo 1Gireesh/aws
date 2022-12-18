@@ -22,7 +22,7 @@ LoginController.userLogin = async (req, res) => {
                 // Checking Both email and password are correct or not
                 if (user.email === email && isMatch) {
                     let token = jsonwebtoken_1.default.sign({ userID: user === null || user === void 0 ? void 0 : user._id }, process.env.JWT_SECRET_KEY || "", { expiresIn: "5d" });
-                    res.status(201).send({
+                    res.status(200).send({
                         Status: "Success",
                         Message: "Login Successfully",
                         Token: token,
@@ -30,7 +30,7 @@ LoginController.userLogin = async (req, res) => {
                 }
                 // Checking either email or password is incorrect
                 else {
-                    res.send({
+                    res.status(401).send({
                         Status: "Failed",
                         Message: "Incorrect Details. Please check your email or password",
                     });
@@ -38,35 +38,28 @@ LoginController.userLogin = async (req, res) => {
             }
             // Checking if user not registered
             else {
-                res.send({ Status: "Failed", Message: "User not registered" });
+                res
+                    .status(405)
+                    .send({ Status: "Failed", Message: "User not registered" });
             }
         }
         // Checking all fields are there in input
         else {
-            res.send({ Status: "Failed", Message: "All fields are required" });
+            res
+                .status(406)
+                .send({ Status: "Failed", Message: "All fields are required" });
         }
     }
     catch (err) {
         console.log(err);
-        res.send("Unable to Login");
+        res.status(408).send({ Message: "Unable to Login" });
     }
 };
-LoginController.changeUserPassword = async (req, res) => {
-    const { password, password_confirmation } = req.body;
-    if (password && password_confirmation) {
-        if (password !== password_confirmation) {
-            res.send({
-                Status: "Failed",
-                Message: "Password & confirm password doesn't match",
-            });
-        }
-        else {
-            const salt = await bcrypt_1.default.genSalt(14);
-            const hashPassword = await bcrypt_1.default.hash(password, salt);
-        }
-    }
-    else {
-        res.send({ Status: "Failed", Message: "All fields are required" });
-    }
+LoginController.loggedUser = async (req, res) => {
+    // Getting the token which was set in the userMiddleware and then finding the user
+    const userToken = req.token;
+    // Getting user here
+    const user = await User_1.default.findById(userToken);
+    res.send({ User: user });
 };
 exports.default = LoginController;

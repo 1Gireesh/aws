@@ -22,44 +22,44 @@ SignupController.userRegistration = async (req, res) => {
     // If user is not in database creating new one
     else {
         // Checking if all the fields are there or not
-        if (name && email && password && password_confirmation && tc) {
+        if (name && email && password /* && password_confirmation && tc */) {
             // Checking password is equal to confirm password
-            if (password === password_confirmation) {
-                try {
-                    const salt = await bcrypt_1.default.genSalt(14);
-                    const hashPassword = await bcrypt_1.default.hash(password, salt);
-                    const newUser = new User_1.default({
-                        name: name,
-                        email: email,
-                        password: hashPassword,
-                        tc: tc,
-                    });
-                    await newUser.save();
-                    const saved_user = await User_1.default.findOne({ email: email });
-                    // Generating JWT Token
-                    let token = jsonwebtoken_1.default.sign({ userID: saved_user === null || saved_user === void 0 ? void 0 : saved_user._id }, process.env.JWT_SECRET_KEY || "", { expiresIn: "5d" });
-                    res.status(201).send({
-                        Status: "Success",
-                        Message: "User Created Successfully",
-                        Token: token,
-                    });
-                }
-                catch (err) {
-                    console.log(err);
-                    res.send({
-                        Status: "Failed",
-                        Message: "Can't Register",
-                        err: err,
-                    });
-                }
-            }
-            // If password and confirm password not matching
-            else {
-                res.send({
-                    Status: "Failed",
-                    Message: "Password and Confirm Password doesn't match",
+            // if (password === password_confirmation) {
+            try {
+                const salt = await bcrypt_1.default.genSalt(14);
+                const hashPassword = await bcrypt_1.default.hash(password, salt);
+                const newUser = new User_1.default({
+                    name: name,
+                    email: email,
+                    password: hashPassword,
+                    tc: tc,
+                });
+                await newUser.save();
+                const saved_user = await User_1.default.findOne({ email: email });
+                // Generating JWT Token
+                let token = jsonwebtoken_1.default.sign({ userID: saved_user === null || saved_user === void 0 ? void 0 : saved_user._id }, process.env.JWT_SECRET_KEY || "", { expiresIn: "5d" });
+                res.status(201).send({
+                    Status: "Success",
+                    Message: "User Created Successfully",
+                    Token: token,
                 });
             }
+            catch (err) {
+                console.log(err);
+                res.send({
+                    Status: "Failed",
+                    Message: "Can't Register",
+                    err: err,
+                });
+            }
+            // }
+            // If password and confirm password not matching
+            // else {
+            //   res.send({
+            //     Status: "Failed",
+            //     Message: "Password and Confirm Password doesn't match",
+            //   });
+            // }
         }
         // If some fields or empty form is submitted then this will be used
         else {
