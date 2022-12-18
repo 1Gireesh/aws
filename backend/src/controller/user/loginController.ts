@@ -4,6 +4,13 @@ import "dotenv/config";
 import jwt, { Secret, JwtPayload } from "jsonwebtoken";
 import express, { Request, Response } from "express";
 
+interface CustomRequest extends Request {
+  token: string | JwtPayload;
+  userID: string;
+  iat: number;
+  exp: number;
+}
+
 class LoginController {
   static userLogin = async (req: Request, res: Response) => {
     try {
@@ -18,9 +25,9 @@ class LoginController {
             let token = jwt.sign(
               { userID: user?._id },
               process.env.JWT_SECRET_KEY || "",
-              { expiresIn: "5d" }
+              { expiresIn: "5d" },
             );
-            res.status(201).send({
+            res.status(200).send({
               Status: "Success",
               Message: "Login Successfully",
               Token: token,
@@ -28,7 +35,7 @@ class LoginController {
           }
           // Checking either email or password is incorrect
           else {
-            res.send({
+            res.status(401).send({
               Status: "Failed",
               Message: "Incorrect Details. Please check your email or password",
             });
@@ -36,34 +43,29 @@ class LoginController {
         }
         // Checking if user not registered
         else {
-          res.send({ Status: "Failed", Message: "User not registered" });
+          res
+            .status(405)
+            .send({ Status: "Failed", Message: "User not registered" });
         }
       }
       // Checking all fields are there in input
       else {
-        res.send({ Status: "Failed", Message: "All fields are required" });
+        res
+          .status(406)
+          .send({ Status: "Failed", Message: "All fields are required" });
       }
     } catch (err) {
       console.log(err);
-      res.send("Unable to Login");
+      res.status(408).send({Message:"Unable to Login"});
     }
   };
 
-  static changeUserPassword = async (req: Request, res: Response) => {
-    const { password, password_confirmation } = req.body;
-    if (password && password_confirmation) {
-      if (password !== password_confirmation) {
-        res.send({
-          Status: "Failed",
-          Message: "Password & confirm password doesn't match",
-        });
-      } else {
-        const salt = await bcrypt.genSalt(14);
-        const hashPassword = await bcrypt.hash(password, salt);
-      }
-    } else {
-      res.send({ Status: "Failed", Message: "All fields are required" });
-    }
+  static loggedUser = async (req: Request, res: Response) => {
+    // Getting the token which was set in the userMiddleware and then finding the user
+    const userToken = (req as CustomRequest).token;
+    // Getting user here
+    const user = await UserModel.findById(userToken);
+    res.send({ User: user });
   };
 }
 
